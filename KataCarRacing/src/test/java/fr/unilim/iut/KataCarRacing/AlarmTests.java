@@ -11,8 +11,7 @@ public class AlarmTests {
 
 	@Test
 	public void AlarmeDeclenche_ValeurPressionTropBasse() {
-		Sensor sensor = mock(Sensor.class);
-		when(sensor.popNextPressurePsiValue()).thenReturn(0.0);
+		Sensor sensor = capteurQuiSonde(0.0);
 
 		Alarm alarm = new Alarm(sensor);
 		alarm.check();
@@ -21,8 +20,7 @@ public class AlarmTests {
 
 	@Test
 	public void AlarmeDeclenche_ValeurPressionTropHaute() {
-		Sensor sensor = mock(Sensor.class);
-		when(sensor.popNextPressurePsiValue()).thenReturn(30.0);
+		Sensor sensor = capteurQuiSonde(30.0);
 
 		Alarm alarm = new Alarm(sensor);
 		alarm.check();
@@ -31,8 +29,7 @@ public class AlarmTests {
 
 	@Test
 	public void AlarmePasDeclenche_ValeurDansSeuilSecurite() {
-		Sensor sensor = mock(Sensor.class);
-		when(sensor.popNextPressurePsiValue()).thenReturn(19.0);
+		Sensor sensor = capteurQuiSonde(19.0);
 
 		Alarm alarm = new Alarm(sensor);
 		alarm.check();
@@ -41,15 +38,20 @@ public class AlarmTests {
 
 	@Test
 	public void AlarmeResteDeclenche() {
-		Sensor sensor = mock(Sensor.class);
-		when(sensor.popNextPressurePsiValue()).thenReturn(30.0);
+		Sensor sensor = capteurQuiSonde(30.0);
 
 		Alarm alarm = new Alarm(sensor);
 		alarm.check();
 
-		when(sensor.popNextPressurePsiValue()).thenReturn(19.0);
+		when(sensor.probeValue()).thenReturn(19.0);
 		alarm.check();
 		assertTrue(alarm.isAlarmOn());
+	}
+	
+	private Sensor capteurQuiSonde(double value) {
+		Sensor sensor = mock(PressureSensor.class);
+		when(sensor.probeValue()).thenReturn(value);
+		return sensor;
 	}
 
 }
